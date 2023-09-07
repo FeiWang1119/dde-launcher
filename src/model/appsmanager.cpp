@@ -124,7 +124,7 @@ AppsManager::AppsManager(QObject *parent)
     m_refreshCalendarIconTimer->setSingleShot(false);
 
     if (AMInter::instance()->isAMReborn()) {
-        connect(AMInter::instance(), &AMInter::NewAppLaunched, this, &AppsManager::markLaunched);
+        connect(AMInter::instance(), &AMInter::newAppLaunched, this, &AppsManager::markLaunched);
     } else {
         connect(m_amDbusLauncherInter, &AMDBusLauncherInter::NewAppLaunched, this, &AppsManager::markLaunched);
     }
@@ -1041,7 +1041,7 @@ void AppsManager::launchApp(const QModelIndex &index)
     }
 
     if (AMInter::instance()->isAMReborn()) {
-        AMInter::instance()->Launch(desktop);
+        AMInter::instance()->launch(desktop);
     } else {
         m_startManagerInter->Launch(desktop);
     }
@@ -1130,7 +1130,7 @@ void AppsManager::delayRefreshData()
 {
     // TODO: 这个接口返回数据存在异常
     if (AMInter::instance()->isAMReborn()) {
-        m_newInstalledAppsList = AMInter::instance()->GetAllNewInstalledApps();
+        m_newInstalledAppsList = AMInter::instance()->getAllNewInstalledApps();
     } else {
         m_newInstalledAppsList = m_amDbusLauncherInter->GetAllNewInstalledApps().value();
     }
@@ -1379,7 +1379,7 @@ bool AppsManager::appIsOnDock(const QString &desktop)
 bool AppsManager::appIsOnDesktop(const QString &desktop)
 {
     if (AMInter::instance()->isAMReborn()) {
-        return AMInter::instance()->IsItemOnDesktop(desktop);
+        return AMInter::instance()->isOnDesktop(desktop);
     } else {
         return m_amDbusLauncherInter->IsItemOnDesktop(desktop).value();
     }
@@ -1488,7 +1488,7 @@ void AppsManager::refreshCategoryInfoList()
     // 1. 从后端服务获取所有应用列表
     ItemInfoList_v1 datas;
     if (AMInter::instance()->isAMReborn()) {
-        datas = ItemInfo_v1::itemV2ListToItemV1List(AMInter::instance()->GetAllItemInfos());
+        datas = ItemInfo_v1::itemV2ListToItemV1List(AMInter::instance()->getAllItemInfos());
     } else {
         datas = ItemInfo_v1::itemV2ListToItemV1List(reply.value());
     }
@@ -1580,7 +1580,7 @@ void AppsManager::refreshCategoryInfoList()
 
     // 5. 获取新安装的应用列表
     if (AMInter::instance()->isAMReborn()) {
-        m_newInstalledAppsList = AMInter::instance()->GetAllNewInstalledApps();
+        m_newInstalledAppsList = AMInter::instance()->getAllNewInstalledApps();
     } else {
         m_newInstalledAppsList = m_amDbusLauncherInter->GetAllNewInstalledApps().value();
     }

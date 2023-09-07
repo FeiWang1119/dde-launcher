@@ -321,9 +321,9 @@ void MenuWorker::handleToDesktop()
 {
     if (AMInter::instance()->isAMReborn()) {
         if (m_isItemOnDesktop)
-            AMInter::instance()->RequestRemoveFromDesktop(m_appKey);
+            AMInter::instance()->requestRemoveFromDesktop(m_appKey);
         else
-            AMInter::instance()->RequestSendToDesktop(m_appKey);
+            AMInter::instance()->requestSendToDesktop(m_appKey);
     } else {
         if (m_isItemOnDesktop)
             m_amDbusLauncher->RequestRemoveFromDesktop(m_appKey);

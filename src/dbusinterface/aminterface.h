@@ -50,6 +50,7 @@ class ItemInfo_v3
     };
 public:
     ItemInfo_v3();
+    ItemInfo_v2 toItemInfo_v2();
     PropMap m_actionName;
     QStringList m_actions;
     QStringList m_categories;
@@ -62,7 +63,7 @@ public:
     bool m_X_Flatpak;
     bool m_X_linglong;
     qulonglong m_installedTime;
-    QString m_objectPath;
+//    QString m_objectPath;
 
     Categorytype category() const;
     friend QDebug operator<<(QDebug argument, const ItemInfo_v3 &info);
@@ -97,23 +98,24 @@ public:
     static AMInter *instance();
 
     bool isAMReborn();
-    ItemInfoList_v2 GetAllItemInfos();
-    QStringList GetAllNewInstalledApps();
-    void RequestRemoveFromDesktop(const QString &in0);
-    void RequestSendToDesktop(const QString &in0);
-    bool IsItemOnDesktop(QString appId);
-    void Launch(const QString &in0);
+    ItemInfoList_v2 getAllItemInfos();
+    QStringList getAllNewInstalledApps();
+    void requestRemoveFromDesktop(const QString &appId);
+    void requestSendToDesktop(const QString &appId);
+    bool isOnDesktop(QString appId);
+    void launch(const QString &desktop);
     bool isLingLong(const QString &appId) const;
     void uninstallApp(const QString &name, bool isLinglong = false);
     void setDisableScaling(QString appId, bool value);
     bool getDisableScaling(QString appId);
     QStringList autostartList() const;
-    bool addAutostart(const QString &in0);
-    bool removeAutostart(const QString &in0);
+    bool addAutostart(const QString &appId);
+    bool removeAutostart(const QString &appId);
 
 Q_SIGNALS: // SIGNALS
-    void NewAppLaunched(const QString &in0);
-    void autostartChanged(const QString &in0, const QString &in1);
+    void newAppLaunched(const QString &appId);
+    void autostartChanged(const QString &action, const QString &appId);
+    void itemChanged(const QString &action, ItemInfo_v2 info_v2, qlonglong categoryId);
 
 public Q_SLOTS:
     void onInterfaceAdded(const QDBusObjectPath &object_path, const ObjectInterfaceMap &interfaces);
@@ -123,7 +125,7 @@ public Q_SLOTS:
 private:
     AMInter(QObject *parent = Q_NULLPTR);
 
-    void GetAllInfos();
+    void getAllInfos();
     void buildConnect();
     bool ll_uninstall(const QString &appid);
     bool lastore_uninstall(const QString &pkgName);
@@ -131,9 +133,12 @@ private:
     QStringList getDisableScalingApps();
     void setDisableScalingApps(const QStringList &value);
     void monitorAutoStartFiles();
+    ItemInfo_v3 getItemInfo_v3(const ObjectInterfaceMap &values);
+
     AMDBusInter *m_amDbusInter;
     ItemInfoList_v2 m_itemInfoList_v2;
     ItemInfoList_v3 m_itemInfoList_v3;
+    QMap<QString, ItemInfo_v3> m_info;
     QStringList m_autoStartApps;
     DFileWatcher *m_autoStartFileWather;
 };
